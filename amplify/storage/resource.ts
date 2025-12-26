@@ -6,9 +6,6 @@ export const storage = defineStorage({
     'media/*': [
       allow.authenticated.to(['read', 'write', 'delete']),
       allow.guest.to(['read'])
-    ],
-    'LOGO.png': [
-      allow.guest.to(['read'])
     ]
   })
 });

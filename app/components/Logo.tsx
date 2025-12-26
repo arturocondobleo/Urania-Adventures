@@ -9,7 +9,7 @@ export default function Logo() {
     const fetchLogo = async () => {
       try {
         const result = await getUrl({
-          path: 'LOGO.png',
+          path: 'media/LOGO.png',
           // Ensure we request a guest accessible URL if needed, 
           // but standard getUrl handles auth based on current user state.
           // Since we allowed guest access, it should work even if not logged in.
