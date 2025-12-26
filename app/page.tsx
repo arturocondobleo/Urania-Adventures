@@ -21,7 +21,7 @@ export default function LandingPage() {
   useEffect(() => {
     const fetchVideo = async () => {
       try {
-        const result = await getUrl({ path: 'media/timelapse.mp4' });
+        const result = await getUrl({ path: 'media/timelapse.webm' });
         setVideoUrl(result.url.toString());
       } catch (error) {
         console.error("Error fetching video:", error);
@@ -135,7 +135,7 @@ export default function LandingPage() {
                 objectFit: "cover",
               }}
             >
-              <source src={videoUrl} type="video/mp4" />
+              <source src={videoUrl} type="video/webm" />
             </video>
           ) : (
             <div
