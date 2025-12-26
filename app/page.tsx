@@ -5,6 +5,7 @@ import { Amplify } from "aws-amplify";
 import outputs from "@/amplify_outputs.json";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Logo from "./components/Logo";
 
 Amplify.configure(outputs);
 gsap.registerPlugin(ScrollTrigger);
@@ -121,9 +122,9 @@ export default function LandingPage() {
             mixBlendMode: "difference",
           }}
         >
-          <h1 style={{ fontSize: "clamp(3rem, 8vw, 6rem)", fontWeight: "700", letterSpacing: "-0.02em", marginBottom: "1rem", lineHeight: 1.1 }}>
-            Urania Adventures
-          </h1>
+          <div style={{ marginBottom: "1rem" }}>
+            <Logo />
+          </div>
           <p style={{ fontSize: "clamp(1.2rem, 3vw, 2rem)", fontWeight: "300", opacity: 0.9 }}>
             Explora el Universo.
           </p>
