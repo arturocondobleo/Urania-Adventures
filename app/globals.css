@@ -1,17 +1,12 @@
 :root {
-  --background: #050510;
+  --background: #000000;
   --foreground: #ffffff;
-  --primary: #7c3aed;
-  --secondary: #4c1d95;
-  --accent: #fbbf24;
-  --text-muted: #9ca3af;
-  --font-sans: 'Inter', sans-serif;
 }
 
 * {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
 html,
@@ -20,8 +15,8 @@ body {
   overflow-x: hidden;
   background-color: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
-  scroll-behavior: smooth;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
@@ -29,152 +24,8 @@ a {
   text-decoration: none;
 }
 
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 1rem;
-}
-
-h1 { font-size: 3rem; }
-h2 { font-size: 2.5rem; }
-h3 { font-size: 1.75rem; }
-p { line-height: 1.6; margin-bottom: 1rem; }
-
-/* Layout */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-section {
-  padding: 4rem 0;
-}
-
-/* Components */
-.btn {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  border: none;
-}
-
-.btn-primary {
-  background-color: var(--primary);
-  color: white;
-}
-
-.btn-primary:hover {
-  background-color: var(--secondary);
-}
-
-.btn-whatsapp {
-  background-color: #25D366;
-  color: white;
-}
-
-.btn-whatsapp:hover {
-  background-color: #128C7E;
-}
-
-/* Hero Section */
-.hero {
-  position: relative;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  overflow: hidden;
-}
-
-.hero-video {
-  position: absolute;
-  top: 0;
-  left: 0;
+img {
+  display: block;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -1;
-  opacity: 0.6;
-}
-
-.hero-content {
-  z-index: 1;
-  max-width: 800px;
-  padding: 2rem;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 1rem;
-  backdrop-filter: blur(5px);
-}
-
-/* Grid */
-.grid {
-  display: grid;
-  gap: 2rem;
-}
-
-.grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-.grid-3 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
-
-/* Cards */
-.card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 1rem;
-  padding: 1.5rem;
-  transition: transform 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* Footer */
-footer {
-  background: #02020a;
-  padding: 3rem 0;
-  margin-top: 4rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Utilities */
-.text-center { text-align: center; }
-.text-accent { color: var(--accent); }
-.mb-4 { margin-bottom: 1rem; }
-.mb-8 { margin-bottom: 2rem; }
-
-/* Animations */
-.reveal {
-  opacity: 0;
-  transform: translateY(50px);
-  transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); /* Apple-like ease */
-  filter: blur(10px);
-}
-
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
-  filter: blur(0);
-}
-
-/* Stagger delays for grid items */
-.reveal-delay-1 { transition-delay: 0.1s; }
-.reveal-delay-2 { transition-delay: 0.2s; }
-.reveal-delay-3 { transition-delay: 0.3s; }
-
-/* Smooth scrolling for the whole page */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Enhanced Hero for Parallax */
-.hero-video {
-  will-change: transform;
-  transform: scale(1.1);
+  height: auto;
 }

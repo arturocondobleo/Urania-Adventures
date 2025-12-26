@@ -1,183 +1,210 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Amplify } from "aws-amplify";
 import outputs from "@/amplify_outputs.json";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 Amplify.configure(outputs);
+gsap.registerPlugin(ScrollTrigger);
 
 export default function LandingPage() {
+  const heroRef = useRef<HTMLElement>(null);
+  const heroTextRef = useRef<HTMLDivElement>(null);
+  const heroImageRef = useRef<HTMLDivElement>(null);
+  const sectionsRef = useRef<HTMLElement[]>([]);
+
   useEffect(() => {
-    // Intersection Observer for reveal animations
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('active');
+    // Hero Animation
+    const tl = gsap.timeline();
+
+    if (heroImageRef.current) {
+      tl.fromTo(
+        heroImageRef.current,
+        { scale: 1.2 },
+        { scale: 1, duration: 10, ease: "power1.out" }
+      );
+    }
+
+    if (heroTextRef.current) {
+      tl.fromTo(
+        heroTextRef.current,
+        { opacity: 0, y: 50 },
+        { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" },
+        "-=9"
+      );
+    }
+
+    // Scroll Animations for Sections
+    sectionsRef.current.forEach((section) => {
+      const image = section.querySelector(".feature-image");
+      const text = section.querySelector(".feature-text");
+
+      gsap.fromTo(
+        section,
+        { opacity: 0, y: 100 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: section,
+            start: "top 80%",
+            end: "top 50%",
+            scrub: false,
+            toggleActions: "play none none reverse",
+          },
         }
-      });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
-
-    // Parallax effect for Hero
-    const handleScroll = () => {
-      const scrolled = window.scrollY;
-      const heroVideo = document.querySelector('.hero-video') as HTMLElement;
-      if (heroVideo) {
-        heroVideo.style.transform = `translateY(${scrolled * 0.5}px) scale(1.1)`;
+      );
+      
+      if(image) {
+          gsap.to(image, {
+              yPercent: 20,
+              ease: "none",
+              scrollTrigger: {
+                  trigger: section,
+                  start: "top bottom",
+                  end: "bottom top",
+                  scrub: true
+              }
+          });
       }
-    };
-    window.addEventListener('scroll', handleScroll);
+    });
 
     return () => {
-      observer.disconnect();
-      window.removeEventListener('scroll', handleScroll);
+      ScrollTrigger.getAll().forEach(t => t.kill());
     };
   }, []);
 
+  const addToRefs = (el: HTMLElement | null) => {
+    if (el && !sectionsRef.current.includes(el)) {
+      sectionsRef.current.push(el);
+    }
+  };
+
   return (
-    <main>
-      {/* Navigation */}
-      <nav style={{ position: 'absolute', top: 0, width: '100%', padding: '1.5rem', zIndex: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div className="reveal" style={{ fontWeight: 'bold', fontSize: '1.5rem', color: 'white' }}>Urania Adventures</div>
-        <div className="reveal reveal-delay-1" style={{ display: 'flex', gap: '1.5rem' }}>
-          <a href="#about" style={{ color: 'white' }}>Nosotros</a>
-          <a href="#experiences" style={{ color: 'white' }}>Experiencias</a>
-          <a href="#blog" style={{ color: 'white' }}>Blog</a>
-          <a href="#contact" style={{ color: 'white' }}>Contacto</a>
-        </div>
-      </nav>
-
+    <main style={{ backgroundColor: "#000", color: "#fff", overflow: "hidden" }}>
       {/* Hero Section */}
-      <section className="hero">
-        <div className="hero-video" style={{ background: 'url(https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop) center/cover no-repeat' }}></div>
-        <div className="hero-content reveal">
-          <h1 className="mb-4">Descubre el Universo con <span className="text-accent">Ciencia y Pasión</span></h1>
-          <p className="mb-8" style={{ fontSize: '1.25rem' }}>
-            Experiencias de astroturismo auténticas, dirigidas por astrofísicos profesionales.
-            Conecta con el cosmos de una manera única e inclusiva.
+      <section
+        ref={heroRef}
+        style={{
+          height: "100vh",
+          width: "100%",
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          ref={heroImageRef}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundImage: "url('/images/hero.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            zIndex: 0,
+          }}
+        />
+        <div
+          ref={heroTextRef}
+          style={{
+            zIndex: 1,
+            textAlign: "center",
+            mixBlendMode: "difference",
+          }}
+        >
+          <h1 style={{ fontSize: "clamp(3rem, 8vw, 6rem)", fontWeight: "700", letterSpacing: "-0.02em", marginBottom: "1rem", lineHeight: 1.1 }}>
+            Urania Adventures
+          </h1>
+          <p style={{ fontSize: "clamp(1.2rem, 3vw, 2rem)", fontWeight: "300", opacity: 0.9 }}>
+            Explora el Universo.
           </p>
-          <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="btn btn-whatsapp">
-            Reserva tu Experiencia
-          </a>
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="container">
-        <div className="grid grid-2" style={{ alignItems: 'center' }}>
-          <div className="reveal">
-            <h2 className="mb-4">Más que Astroturismo, <span className="text-accent">Ciencia Real</span></h2>
-            <p>
-              En Urania Adventures, nos distinguimos por el rigor científico. Nuestras experiencias son diseñadas y dirigidas por una <strong>astrofísica profesional</strong>, alejándonos de mitos y pseudociencias.
-            </p>
-            <p>
-              Creemos firmemente que el cielo es para todos. Por eso, adaptamos nuestras actividades para ser <strong>inclusivas</strong>, permitiendo que personas con discapacidad también puedan disfrutar de la maravilla del universo.
-            </p>
-          </div>
-          <div className="reveal reveal-delay-2" style={{ height: '400px', background: 'url(https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072&auto=format&fit=crop) center/cover', borderRadius: '1rem' }}></div>
+      {/* Feature 1 */}
+      <section
+        ref={addToRefs}
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "4rem 2rem",
+          position: "relative",
+        }}
+      >
+        <div style={{ maxWidth: "1200px", width: "100%", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "4rem", alignItems: "center" }}>
+           <div className="feature-text">
+              <h2 style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", marginBottom: "1.5rem", fontWeight: "600", lineHeight: 1.1 }}>Campamentos Astronómicos.</h2>
+              <p style={{ fontSize: "1.25rem", lineHeight: "1.6", color: "#ccc" }}>
+                Vive la magia de la noche bajo un cielo estrellado. Nuestros campamentos están diseñados para conectarte con el cosmos de una manera única y segura.
+              </p>
+           </div>
+           <div className="feature-image" style={{ height: "600px", overflow: "hidden", borderRadius: "20px" }}>
+              <img src="/images/feature1.jpg" alt="Campamento" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+           </div>
         </div>
       </section>
 
-      {/* Experiences Section */}
-      <section id="experiences" style={{ background: 'rgba(255,255,255,0.02)' }}>
-        <div className="container">
-          <h2 className="text-center mb-8 reveal">Nuestras Experiencias</h2>
-          <div className="grid grid-3">
-            <div className="card reveal reveal-delay-1">
-              <div style={{ height: '200px', background: '#2d1b69', marginBottom: '1rem', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span>Observación Telescópica</span>
-              </div>
-              <h3>Noches de Estrellas</h3>
-              <p>Observación guiada con telescopios profesionales. Aprende a identificar constelaciones y objetos de cielo profundo.</p>
-            </div>
-            <div className="card reveal reveal-delay-2">
-              <div style={{ height: '200px', background: '#1e1b4b', marginBottom: '1rem', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span>Senderismo Nocturno</span>
-              </div>
-              <h3>Caminatas Cósmicas</h3>
-              <p>Combina el senderismo nocturno con la interpretación del cielo. Una conexión total con la naturaleza.</p>
-            </div>
-            <div className="card reveal reveal-delay-3">
-              <div style={{ height: '200px', background: '#312e81', marginBottom: '1rem', borderRadius: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span>Talleres Educativos</span>
-              </div>
-              <h3>Ciencia para Todos</h3>
-              <p>Talleres interactivos para escuelas y grupos. Aprende astrofísica de manera divertida y accesible.</p>
-            </div>
-          </div>
+      {/* Feature 2 */}
+      <section
+        ref={addToRefs}
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "4rem 2rem",
+          position: "relative",
+          backgroundColor: "#050505"
+        }}
+      >
+        <div style={{ maxWidth: "1200px", width: "100%", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "4rem", alignItems: "center", direction: "rtl" }}>
+           <div className="feature-text" style={{ direction: "ltr" }}>
+              <h2 style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", marginBottom: "1.5rem", fontWeight: "600", lineHeight: 1.1 }}>Experiencias Inolvidables.</h2>
+              <p style={{ fontSize: "1.25rem", lineHeight: "1.6", color: "#ccc" }}>
+                Cada aventura es una historia que contar. Desde la observación de planetas hasta la fotografía nocturna, creamos recuerdos que duran para siempre.
+              </p>
+           </div>
+           <div className="feature-image" style={{ height: "600px", overflow: "hidden", borderRadius: "20px" }}>
+              <img src="/images/feature2.jpg" alt="Experiencia" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+           </div>
         </div>
       </section>
 
-      {/* Blog Section */}
-      <section id="blog" className="container">
-        <h2 className="text-center mb-8 reveal">Divulgación Científica</h2>
-        <div className="grid grid-3">
-          <div className="card reveal reveal-delay-1">
-            <div style={{ height: '150px', background: '#4c1d95', marginBottom: '1rem', borderRadius: '0.5rem' }}></div>
-            <h3>¿Qué es la contaminación lumínica?</h3>
-            <p className="text-muted">Descubre cómo afecta a nuestra salud y a la observación astronómica.</p>
-            <a href="#" className="text-accent">Leer más →</a>
-          </div>
-          <div className="card reveal reveal-delay-2">
-            <div style={{ height: '150px', background: '#5b21b6', marginBottom: '1rem', borderRadius: '0.5rem' }}></div>
-            <h3>Guía para observar las Perseidas</h3>
-            <p className="text-muted">Todo lo que necesitas saber para disfrutar de esta lluvia de estrellas.</p>
-            <a href="#" className="text-accent">Leer más →</a>
-          </div>
-          <div className="card reveal reveal-delay-3">
-            <div style={{ height: '150px', background: '#6d28d9', marginBottom: '1rem', borderRadius: '0.5rem' }}></div>
-            <h3>Mitos sobre la Luna</h3>
-            <p className="text-muted">Desmintiendo creencias populares con ciencia real.</p>
-            <a href="#" className="text-accent">Leer más →</a>
-          </div>
+      {/* Feature 3 */}
+      <section
+        ref={addToRefs}
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "4rem 2rem",
+          position: "relative",
+        }}
+      >
+        <div style={{ maxWidth: "1200px", width: "100%", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "4rem", alignItems: "center" }}>
+           <div className="feature-text">
+              <h2 style={{ fontSize: "clamp(2.5rem, 5vw, 4rem)", marginBottom: "1.5rem", fontWeight: "600", lineHeight: 1.1 }}>Conexión con la Naturaleza.</h2>
+              <p style={{ fontSize: "1.25rem", lineHeight: "1.6", color: "#ccc" }}>
+                Desconecta para reconectar. Nuestros destinos están elegidos cuidadosamente para ofrecerte paz, tranquilidad y una vista inigualable del universo.
+              </p>
+           </div>
+           <div className="feature-image" style={{ height: "600px", overflow: "hidden", borderRadius: "20px" }}>
+              <img src="/images/feature3.jpg" alt="Naturaleza" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+           </div>
         </div>
       </section>
-
-      {/* Testimonials Section */}
-      <section className="container">
-        <h2 className="text-center mb-8 reveal">Lo que dicen nuestros viajeros</h2>
-        <div className="grid grid-3">
-          <div className="card reveal reveal-delay-1">
-            <p className="mb-4">"Increíble experiencia. Nunca había visto el cielo así. La explicación científica le da un valor incalculable."</p>
-            <p className="text-accent">- María G.</p>
-          </div>
-          <div className="card reveal reveal-delay-2">
-            <p className="mb-4">"La inclusión es real. Mi hijo con discapacidad pudo disfrutar plenamente. Gracias Urania Adventures."</p>
-            <p className="text-accent">- Carlos R.</p>
-          </div>
-          <div className="card reveal reveal-delay-3">
-            <p className="mb-4">"Profesionalismo puro. Se nota la pasión y el conocimiento. Totalmente recomendado."</p>
-            <p className="text-accent">- Ana P.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" style={{ background: 'linear-gradient(to top, #000, #050510)' }}>
-        <div className="container text-center reveal">
-          <h2 className="mb-4">¿Listo para la aventura?</h2>
-          <p className="mb-8">
-            Reserva tu lugar o solicita más información. Atendemos exclusivamente por WhatsApp para brindarte una atención personalizada.
-          </p>
-          <a href="https://wa.me/1234567890" target="_blank" rel="noopener noreferrer" className="btn btn-whatsapp" style={{ fontSize: '1.25rem', padding: '1rem 2rem' }}>
-            Contactar por WhatsApp
-          </a>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="text-center reveal">
-        <div className="container">
-          <h3 className="mb-4">Urania Adventures</h3>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '2rem' }}>
-            <a href="#" className="text-muted">Instagram</a>
-            <a href="#" className="text-muted">Facebook</a>
-            <a href="#" className="text-muted">TikTok</a>
-          </div>
-          <p className="text-muted">© {new Date().getFullYear()} Urania Adventures. Todos los derechos reservados.</p>
-        </div>
-      </footer>
     </main>
   );
 }
