@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Amplify } from "aws-amplify";
+import { getUrl } from "aws-amplify/storage";
 import outputs from "@/amplify_outputs.json";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -15,8 +16,19 @@ export default function LandingPage() {
   const heroTextRef = useRef<HTMLDivElement>(null);
   const heroImageRef = useRef<HTMLDivElement>(null);
   const sectionsRef = useRef<HTMLElement[]>([]);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
 
   useEffect(() => {
+    const fetchVideo = async () => {
+      try {
+        const result = await getUrl({ path: 'media/timelapse.mp4' });
+        setVideoUrl(result.url.toString());
+      } catch (error) {
+        console.error("Error fetching video:", error);
+      }
+    };
+    fetchVideo();
+
     // Hero Animation
     const tl = gsap.timeline();
 
@@ -108,18 +120,40 @@ export default function LandingPage() {
             left: 0,
             width: "100%",
             height: "100%",
-            backgroundImage: "url('/images/hero.jpg')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
             zIndex: 0,
           }}
-        />
+        >
+          {videoUrl ? (
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            >
+              <source src={videoUrl} type="video/mp4" />
+            </video>
+          ) : (
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                backgroundImage: "url('/images/hero.jpg')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
+          )}
+        </div>
         <div
           ref={heroTextRef}
           style={{
             zIndex: 1,
             textAlign: "center",
-            mixBlendMode: "difference",
           }}
         >
           <div style={{ marginBottom: "1rem" }}>
