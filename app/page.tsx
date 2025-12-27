@@ -21,7 +21,7 @@ export default function LandingPage() {
   useEffect(() => {
     const fetchVideo = async () => {
       try {
-        const result = await getUrl({ path: 'media/timelapse.webm' });
+        const result = await getUrl({ path: 'media/timelapse.mp4' });
         setVideoUrl(result.url.toString());
       } catch (error) {
         console.error("Error fetching video:", error);
@@ -123,28 +123,21 @@ export default function LandingPage() {
             zIndex: 0,
           }}
         >
-          {videoUrl ? (
+          {videoUrl && (
             <video
+              key={videoUrl}
+              src={videoUrl}
               autoPlay
               muted
               loop
               playsInline
+              disablePictureInPicture
+              preload="auto"
               style={{
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-              }}
-            >
-              <source src={videoUrl} type="video/webm" />
-            </video>
-          ) : (
-            <div
-              style={{
-                width: "100%",
-                height: "100%",
-                backgroundImage: "url('/images/hero.jpg')",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
+                pointerEvents: "none",
               }}
             />
           )}
