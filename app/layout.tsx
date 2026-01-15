@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Urania Adventures | Astroturismo Científico e Inclusivo",
+  title: "Urania Adventures",
   description: "Experiencias de astroturismo con rigor científico, dirigidas por astrofísicos. Observación astronómica, naturaleza y ciencia para todos.",
 };
 
